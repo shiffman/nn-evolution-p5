@@ -25,7 +25,8 @@ function Matrix(rows, cols) {
 Matrix.prototype.randomize = function() {
   for (var i = 0; i < this.rows; i++) {
     for (var j = 0; j < this.cols; j++) {
-      this.matrix[i][j] = randomGaussian();
+      // this.matrix[i][j] = randomGaussian();
+      this.matrix[i][j] = random(-1, 1);
     }
   }
 }
@@ -95,7 +96,7 @@ Matrix.prototype.multiply = function(other) {
         this.matrix[i][j] *= other.matrix[i][j];
       }
     }
-  // Or just a single scalar value?
+    // Or just a single scalar value?
   } else {
     for (var i = 0; i < this.rows; i++) {
       for (var j = 0; j < this.cols; j++) {

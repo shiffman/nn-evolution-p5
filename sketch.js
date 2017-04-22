@@ -10,7 +10,7 @@ var counter = 0;
 
 function setup() {
   createCanvas(600, 400);
-  for (var i = 0; i < 100; i++) {
+  for (var i = 0; i < 200; i++) {
     var bird = new Bird();
     activeBirds[i] = bird;
     allBirds[i] = bird;

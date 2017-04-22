@@ -11,7 +11,7 @@ function Bird(brain) {
     this.brain = brain.copy();
     this.brain.mutate();
   } else {
-    this.brain = new NeuralNetwork(4, 10, 1);
+    this.brain = new NeuralNetwork(4, 16, 2);
   }
 
   this.score = 0;
@@ -48,7 +48,7 @@ function Bird(brain) {
       inputs[2] = map(closest.bottom, 0, height, -1, 1);
       inputs[3] = map(this.y, 0, height, -1, 1);
       var action = this.brain.query(inputs);
-      if (action[0] > 0.5) {
+      if (action[1] > action[0]) {
         this.up();
       }
     }
