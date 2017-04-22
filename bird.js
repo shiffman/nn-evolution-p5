@@ -7,11 +7,13 @@ function Bird(brain) {
   this.y = height / 2;
   this.x = 64;
 
-  if (brain) {
-    this.brain = brain;
+  if (arguments[0] instanceof NeuralNetwork) {
+    this.brain = brain.copy();
+    this.brain.mutate();
   } else {
-    this.brain = new NeuralNetwork(4, 100, 1);
+    this.brain = new NeuralNetwork(4, 10, 1);
   }
+
   this.score = 0;
   this.gravity = 0.6;
   this.lift = -15;
@@ -28,10 +30,6 @@ function Bird(brain) {
     this.score++;
   }
 
-  this.mutate = function() {
-    this.brain.mutate();
-  }
-
   this.think = function(pipes) {
     var closest = null;
     var record = Infinity;
@@ -45,10 +43,10 @@ function Bird(brain) {
 
     if (closest != null) {
       var inputs = [];
-      inputs[0] = closest.x / width;
-      inputs[1] = closest.top / height;
-      inputs[2] = closest.bottom / height;
-      inputs[3] = this.y / height;
+      inputs[0] = map(closest.x, this.x, width, -1, 1);
+      inputs[1] = map(closest.top, 0, height, -1, 1);
+      inputs[2] = map(closest.bottom, 0, height, -1, 1);
+      inputs[3] = map(this.y, 0, height, -1, 1);
       var action = this.brain.query(inputs);
       if (action[0] > 0.5) {
         this.up();

@@ -22,7 +22,7 @@ function dSigmoid(x) {
 function mutate(x) {
   if (random(1) < 0.1) {
     var offset = randomGaussian() * 0.1;
-    var newx = constrain(x + offset,-1,1);
+    var newx = x + offset;
     return newx;
   } else {
     return x;
@@ -30,29 +30,41 @@ function mutate(x) {
 }
 
 // Neural Network constructor function
-function NeuralNetwork(inputnodes, hiddennodes, outputnodes, learningrate) {
+function NeuralNetwork(inputnodes, hiddennodes, outputnodes) {
 
-  // Number of nodes in layer (input, hidden, output)
-  // This network is limited to 3 layers
-  this.inodes = inputnodes;
-  this.hnodes = hiddennodes;
-  this.onodes = outputnodes;
+  // If it's a copy of another NN
+  if (arguments[0] instanceof NeuralNetwork) {
+    var nn = arguments[0];
+    this.inodes = nn.inodes;
+    this.hnodes = nn.hnodes;
+    this.onodes = nn.onodes;
+    this.wih = nn.wih.copy();
+    this.who = nn.who.copy();
+  } else {
+    // Number of nodes in layer (input, hidden, output)
+    // This network is limited to 3 layers
+    this.inodes = inputnodes;
+    this.hnodes = hiddennodes;
+    this.onodes = outputnodes;
 
-  // These are the weight matrices
-  // wih: weights from input to hidden
-  // who: weights from hidden to output
-  // weights inside the arrays are w_i_j
-  // where link is from node i to node j in the next layer
-  // Matrix is rows X columns
-  this.wih = new Matrix(this.hnodes, this.inodes);
-  this.who = new Matrix(this.onodes, this.hnodes);
+    // These are the weight matrices
+    // wih: weights from input to hidden
+    // who: weights from hidden to output
+    // weights inside the arrays are w_i_j
+    // where link is from node i to node j in the next layer
+    // Matrix is rows X columns
+    this.wih = new Matrix(this.hnodes, this.inodes);
+    this.who = new Matrix(this.onodes, this.hnodes);
 
-  // Start with random values
-  this.wih.randomize();
-  this.who.randomize();
+    // Start with random values
+    this.wih.randomize();
+    this.who.randomize();
+  }
 
-  // Learning rate
-  this.lr = learningrate;
+}
+
+NeuralNetwork.prototype.copy = function() {
+  return new NeuralNetwork(this);
 }
 
 
@@ -78,6 +90,6 @@ NeuralNetwork.prototype.query = function(inputs_array) {
 }
 
 NeuralNetwork.prototype.mutate = function() {
-  Matrix.map(this.wih, mutate);
-  Matrix.map(this.who, mutate);
+  this.wih = Matrix.map(this.wih, mutate);
+  this.who = Matrix.map(this.who, mutate);
 }

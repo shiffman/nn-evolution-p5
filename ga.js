@@ -15,8 +15,10 @@ function normalizeFitness(birds) {
   for (var i = 0; i < birds.length; i++) {
     sum += birds[i].score;
   }
+  var check = 0;
   for (var i = 0; i < birds.length; i++) {
     birds[i].fitness = birds[i].score / sum;
+    check += birds[i].fitness;
   }
 }
 
@@ -24,7 +26,6 @@ function generate(oldBirds) {
   var newBirds = [];
   for (var i = 0; i < oldBirds.length; i++) {
     var bird = poolSelection(oldBirds);
-    bird.mutate();
     newBirds[i] = bird;
   }
   return newBirds;
