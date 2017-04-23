@@ -1,8 +1,24 @@
-function nextGeneration() {
+
+function resetGame() {
   counter = 0;
   pipes = [];
+}
+
+function nextGeneration() {
+  resetGame();
   normalizeFitness(allBirds);
   activeBirds = generate(allBirds);
+  allBirds = activeBirds.slice();
+}
+
+function generate(oldBirds) {
+  var newBirds = [];
+
+  for (var i = 0; i < oldBirds.length; i++) {
+    var bird = poolSelection(oldBirds);
+    newBirds[i] = bird;
+  }
+  return newBirds;
 }
 
 
@@ -22,14 +38,7 @@ function normalizeFitness(birds) {
   }
 }
 
-function generate(oldBirds) {
-  var newBirds = [];
-  for (var i = 0; i < oldBirds.length; i++) {
-    var bird = poolSelection(oldBirds);
-    newBirds[i] = bird;
-  }
-  return newBirds;
-}
+
 
 function poolSelection(birds) {
   // Start at 0

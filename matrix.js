@@ -25,8 +25,8 @@ function Matrix(rows, cols) {
 Matrix.prototype.randomize = function() {
   for (var i = 0; i < this.rows; i++) {
     for (var j = 0; j < this.cols; j++) {
-      // this.matrix[i][j] = randomGaussian();
-      this.matrix[i][j] = random(-1, 1);
+      this.matrix[i][j] = randomGaussian();
+      //this.matrix[i][j] = random(-1, 1);
     }
   }
 }

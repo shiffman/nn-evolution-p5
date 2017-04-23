@@ -13,17 +13,12 @@ function sigmoid(x) {
   return y;
 }
 
-// This is the Sigmoid derivative!
-function dSigmoid(x) {
-  return x * (1 - x);
-}
-
 // This is how we adjust weights ever so slightly
 function mutate(x) {
-  if (random(1) < 0.01) {
-    //var offset = randomGaussian() * 0.1;
-    var offset = random(-0.1, 0.1);
-    var newx = constrain(x + offset, -2, 2);
+  if (random(1) < 0.1) {
+    var offset = randomGaussian() * 0.2;
+    //var offset = random(-0.1, 0.1);
+    var newx = x + offset;
     return newx;
   } else {
     return x;

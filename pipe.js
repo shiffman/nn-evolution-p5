@@ -5,17 +5,17 @@
 
 function Pipe() {
 
-  var spacing = random(100, height / 2);
+  var spacing = random(120, height / 2);
   var centery = random(spacing, height - spacing);
 
   this.top = centery - spacing / 2;
   this.bottom = height - (centery + spacing / 2);
   this.x = width;
   this.w = 50;
-  this.speed = 2;
+  this.speed = 4;
 
   this.hits = function(bird) {
-    if (bird.y < this.top || bird.y > height - this.bottom) {
+    if ((bird.y - bird.r) < this.top || (bird.y + bird.r) > (height - this.bottom)) {
       if (bird.x > this.x && bird.x < this.x + this.w) {
         return true;
       }

@@ -6,6 +6,7 @@
 function Bird(brain) {
   this.y = height / 2;
   this.x = 64;
+  this.r = 12;
 
   if (arguments[0] instanceof NeuralNetwork) {
     this.brain = brain.copy();
@@ -15,9 +16,10 @@ function Bird(brain) {
   }
 
   this.score = 0;
-  this.gravity = 0.6;
-  this.lift = -15;
+  this.gravity = 0.4;
+  this.lift = -12;
   this.velocity = 0;
+  this.fitness = 0;
 
   this.copy = function() {
     return new Bird(this.brain);
@@ -26,7 +28,7 @@ function Bird(brain) {
   this.show = function() {
     fill(255, 100);
     stroke(255);
-    ellipse(this.x, this.y, 32, 32);
+    ellipse(this.x, this.y, this.r * 2, this.r * 2);
     this.score++;
   }
 
