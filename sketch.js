@@ -40,6 +40,7 @@ function toggleState() {
   runBest = !runBest;
   if (runBest) {
     resetGame();
+    bestBird.score = 0;
     runBestButton.html('continue training');
   } else {
     nextGeneration();
@@ -110,7 +111,10 @@ function draw() {
       bestBird = tempBestBird;
     }
   } else {
-
+    tempHighScore = bestBird.score;
+    if (tempHighScore > highScore) {
+      highScore = tempHighScore;
+    }
   }
 
   highScoreSpan.html(tempHighScore);
