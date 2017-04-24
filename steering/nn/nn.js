@@ -29,7 +29,7 @@ function dSigmoid(x) {
 // This is how we adjust weights ever so slightly
 function mutate(x) {
   if (random(1) < 0.1) {
-    var offset = randomGaussian() * 0.2;
+    var offset = randomGaussian() * 0.5;
     //var offset = random(-0.1, 0.1);
     var newx = x + offset;
     return newx;

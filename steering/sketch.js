@@ -13,10 +13,14 @@ var food = [];
 var poison = [];
 
 // How good is food, how bad is poison?
-var nutrition = [0.1, -1];
+var nutrition = [0.5, -1];
 
 // Show additional info on DNA?
 var debug;
+
+var speedSlider;
+var speedSpan;
+var best = null;
 
 function setup() {
 
@@ -24,6 +28,8 @@ function setup() {
   var canvas = createCanvas(640, 360);
   canvas.parent('canvascontainer');
   debug = select('#debug');
+  speedSlider = select('#speedSlider');
+  speedSpan = select('#speed');
 
   // Create 10 vehicles
   angleMode(RADIANS);
@@ -47,49 +53,71 @@ function mouseDragged() {
 
 function draw() {
   background(0);
+  var cycles = speedSlider.value();
+  speedSpan.html(cycles);
 
-  // 10% chance of new food
-  if (random(1) < 0.1) {
-    food.push(createVector(random(width), random(height)));
-  }
+  for (var n = 0; n < cycles; n++) {
+    // 10% chance of new food
+    if (random(1) < 0.05) {
+      food.push(createVector(random(width), random(height)));
+    }
 
-  // 1% chance of new poison
-  if (random(1) < 0.01) {
-    //poison.push(createVector(random(width), random(height)));
-  }
+    // 1% chance of new poison
+    if (random(1) < 0.01) {
+      //poison.push(createVector(random(width), random(height)));
+    }
 
-  // Go through all vehicles
-  for (var i = population.length - 1; i >= 0; i--) {
-    var v = population[i];
+    best = null;
+    var record = -1;
 
-    // Eat the food (index 0)
-    v.eat(food, 0);
-    // Eat the poison (index 1)
-    // v.eat(poison, 1);
-    // Check boundaries
-    v.boundaries();
+    // Go through all vehicles
+    for (var i = population.length - 1; i >= 0; i--) {
+      var v = population[i];
 
-    // Update and draw
-    v.update();
-    v.display();
-
-    // If the vehicle has died, remove
-    if (v.dead()) {
-      population.splice(i, 1);
-    } else {
-      // Every vehicle has a chance of cloning itself
-      var child = v.birth();
-      if (child != null) {
-        population.push(child);
+      if (v.score > record) {
+        record = v.score;
+        best = v;
       }
+
+      // Eat the food (index 0)
+      v.eat(food, 0);
+      // Eat the poison (index 1)
+      // v.eat(poison, 1);
+      // Check boundaries
+      v.boundaries();
+
+      // Update and draw
+      v.update();
+      // v.display();
+
+      // If the vehicle has died, remove
+      if (v.dead()) {
+        population.splice(i, 1);
+      } else {
+        // Every vehicle has a chance of cloning itself
+        // var child = v.birth();
+        // if (child != null) {
+        //   population.push(child);
+        // }
+      }
+    }
+
+    var prob = 0.01;
+    if (population.length < 2) {
+      prob = 1;
+    }
+    var child = best.birth(prob);
+    if (child != null) {
+      population.push(child);
     }
   }
 
+
   // Draw all the food and all the poison
   for (var i = 0; i < food.length; i++) {
-    fill(0, 255, 0, 100);
+    fill(0, 255, 0);
     noStroke();
-    ellipse(food[i].x, food[i].y, eat_threshold*2);
+    ellipse(food[i].x, food[i].y, eat_threshold);
   }
 
   for (var i = 0; i < poison.length; i++) {
@@ -97,4 +125,13 @@ function draw() {
     noStroke();
     ellipse(poison[i].x, poison[i].y, 4);
   }
+
+  best.highlight();
+  for (var i = population.length - 1; i >= 0; i--) {
+    var v = population[i];
+    v.display();
+  }
+
+
+
 }

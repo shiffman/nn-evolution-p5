@@ -23,6 +23,8 @@ function Vehicle(x, y, brain) {
   this.maxspeed = 3;
   this.velocity.setMag(this.maxspeed);
 
+  this.score = 0;
+
   this.sensors = [];
   var radius = 50;
   for (var i = 0; i < 360; i += 20) {
@@ -39,7 +41,7 @@ function Vehicle(x, y, brain) {
   } else {
     //var inputs = this.sensors.length*2;
     var inputs = this.sensors.length;
-    this.brain = new NeuralNetwork(inputs, 64, 2);
+    this.brain = new NeuralNetwork(inputs, 32, 2);
   }
 
   // Health
@@ -58,7 +60,7 @@ Vehicle.prototype.update = function() {
   this.acceleration.mult(0);
 
   // Slowly die unless you eat
-  this.health -= 0.002;
+  this.health -= 0.004;
 
 }
 
@@ -68,11 +70,12 @@ Vehicle.prototype.dead = function() {
 }
 
 // Small chance of returning a new child vehicle
-Vehicle.prototype.birth = function() {
+Vehicle.prototype.birth = function(prob) {
   var r = random(1);
-  if (r < 0.001) {
+  if (r < prob) {
     // Same location, same DNA
-    return new Vehicle(this.position.x, this.position.y, this.brain);
+    //return new Vehicle(this.position.x, this.position.y, this.brain);
+    return new Vehicle(random(width), random(height), this.brain);
   }
 }
 
@@ -119,6 +122,7 @@ Vehicle.prototype.eat = function(list, index) {
       list.splice(i, 1);
       // Add or subtract from health based on kind of food
       this.health += nutrition[index];
+      this.score++;
     }
   }
 }
@@ -169,6 +173,12 @@ Vehicle.prototype.display = function() {
   vertex(this.r, this.r * 2);
   endShape(CLOSE);
   pop();
+}
+
+Vehicle.prototype.highlight = function() {
+  fill(255, 0, 255, 100);
+  stroke(255);
+  ellipse(this.position.x, this.position.y, 32, 32);
 }
 
 // A force to keep it on screen
