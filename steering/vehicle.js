@@ -4,13 +4,15 @@
 
 // Evolutionary "Steering Behavior" Simulation
 
+var eat_threshold = 3;
+
 function Sensor(pos) {
   this.pos = pos;
   this.vals = [0, 0];
 }
 
 // Create a new vehicle
-function Vehicle(x, y, dna) {
+function Vehicle(x, y, brain) {
 
   // All the physics stuff
   this.acceleration = createVector();
@@ -28,6 +30,16 @@ function Vehicle(x, y, dna) {
     var yoff = radius * sin(radians(i));
     var pos = createVector(xoff, yoff);
     this.sensors.push(new Sensor(pos));
+  }
+
+
+  if (arguments[2] instanceof NeuralNetwork) {
+    this.brain = brain.copy();
+    this.brain.mutate();
+  } else {
+    //var inputs = this.sensors.length*2;
+    var inputs = this.sensors.length;
+    this.brain = new NeuralNetwork(inputs, 64, 2);
   }
 
   // Health
@@ -60,7 +72,7 @@ Vehicle.prototype.birth = function() {
   var r = random(1);
   if (r < 0.001) {
     // Same location, same DNA
-    return new Vehicle(this.position.x, this.position.y, this.dna);
+    return new Vehicle(this.position.x, this.position.y, this.brain);
   }
 }
 
@@ -77,24 +89,33 @@ Vehicle.prototype.eat = function(list, index) {
       var a = this.position;
       var b = p5.Vector.add(a, this.sensors[j].pos);
       var c = list[i];
-      var r = 5;
+      var r = eat_threshold;
       var intersection = intersecting(a, b, c, r);
       if (intersection) {
-        this.sensors[j].vals[index] = 1;
+        this.sensors[j].vals[index] = map(p5.Vector.dist(a, c), 0, 50, 1, 0);
       }
     }
   }
 
+  var inputs = [];
+  var i = 0;
+  for (var j = 0; j < this.sensors.length; j++) {
+    inputs[i] = this.sensors[j].vals[0];
+    i++;
+    //inputs[i+1] = this.sensors[j].vals[1];
+    //i += 2;
+  }
+  var outputs = this.brain.query(inputs);
+  var force = createVector(outputs[0], outputs[1]);
+  force.limit(this.maxforce);
+  this.applyForce(force);
 
-  // What's the closest?
-  var closest = null;
-  var closestD = Infinity;
   // Look at everything
   for (var i = list.length - 1; i >= 0; i--) {
     // Calculate distance
     var d = p5.Vector.dist(list[i], this.position);
     // If we're withing 5 pixels, eat it!
-    if (d < 5) {
+    if (d < eat_threshold) {
       list.splice(i, 1);
       // Add or subtract from health based on kind of food
       this.health += nutrition[index];
@@ -123,14 +144,18 @@ Vehicle.prototype.display = function() {
   // Extra info
   if (debug.checked()) {
     for (var i = 0; i < this.sensors.length; i++) {
-      if (this.sensors[i].vals[1] == 1) {
-        stroke(255, 0,0);
-      } else if (this.sensors[i].vals[0] == 1) {
-        stroke(0,255,0);
-      } else {
-        stroke(255, 100);
+      // if (this.sensors[i].vals[1] == 1) {
+      //   stroke(255, 0, 0);
+      // } else if (this.sensors[i].vals[0] == 1) {
+      //   stroke(0, 255, 0);
+      // } else {
+      //   stroke(255, 100);
+      // }
+      var val = this.sensors[i].vals[0];
+      if (val > 0) {
+        stroke(0, 255, 0, map(val, 0, 1, 0, 255));
+        line(0, 0, this.sensors[i].pos.x, this.sensors[i].pos.y);
       }
-      line(0, 0, this.sensors[i].pos.x, this.sensors[i].pos.y);
     }
   }
   rotate(theta);
@@ -148,7 +173,7 @@ Vehicle.prototype.display = function() {
 
 // A force to keep it on screen
 Vehicle.prototype.boundaries = function() {
-  var d = 10;
+  var d = 0;
   var desired = null;
   if (this.position.x < d) {
     desired = createVector(this.maxspeed, this.velocity.y);

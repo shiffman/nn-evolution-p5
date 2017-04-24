@@ -16,6 +16,11 @@ function sigmoid(x) {
   return y;
 }
 
+function tanh(x) {
+  var y = Math.tanh(x);
+  return y;
+}
+
 // This is the Sigmoid derivative!
 function dSigmoid(x) {
   return x * (1 - x);
@@ -137,13 +142,13 @@ NeuralNetwork.prototype.query = function(inputs_array) {
   // The input to the hidden layer is the weights (wih) multiplied by inputs
   var hidden_inputs = Matrix.dot(this.wih, inputs);
   // The outputs of the hidden layer pass through sigmoid activation function
-  var hidden_outputs = Matrix.map(hidden_inputs, sigmoid);
+  var hidden_outputs = Matrix.map(hidden_inputs, tanh);
 
   // The input to the output layer is the weights (who) multiplied by hidden layer
   var output_inputs = Matrix.dot(this.who, hidden_outputs);
 
   // The output of the network passes through sigmoid activation function
-  var outputs = Matrix.map(output_inputs, sigmoid);
+  var outputs = Matrix.map(output_inputs, tanh);
 
   // Return the result as an array
   return outputs.toArray();

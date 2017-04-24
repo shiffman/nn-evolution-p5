@@ -53,5 +53,5 @@ function is_on(a, b, c) {
   var d1 = p5.Vector.dist(a, c) + p5.Vector.dist(c, b);
   var d2 = p5.Vector.dist(a, b);
   var diff = abs(d1 - d2);
-  return diff < 1;
+  return diff < 0.01;
 }

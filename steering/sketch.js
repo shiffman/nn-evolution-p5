@@ -27,7 +27,7 @@ function setup() {
 
   // Create 10 vehicles
   angleMode(RADIANS);
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < 50; i++) {
     population[i] = new Vehicle(width / 2, height / 2);
   }
   // Start with some food
@@ -36,7 +36,7 @@ function setup() {
   }
   // Start with some poison
   for (var i = 0; i < 5; i++) {
-    poison[i] = createVector(random(width), random(height));
+    //poison[i] = createVector(random(width), random(height));
   }
 }
 
@@ -55,7 +55,7 @@ function draw() {
 
   // 1% chance of new poison
   if (random(1) < 0.01) {
-    poison.push(createVector(random(width), random(height)));
+    //poison.push(createVector(random(width), random(height)));
   }
 
   // Go through all vehicles
@@ -65,7 +65,7 @@ function draw() {
     // Eat the food (index 0)
     v.eat(food, 0);
     // Eat the poison (index 1)
-    v.eat(poison, 1);
+    // v.eat(poison, 1);
     // Check boundaries
     v.boundaries();
 
@@ -87,9 +87,9 @@ function draw() {
 
   // Draw all the food and all the poison
   for (var i = 0; i < food.length; i++) {
-    fill(0, 255, 0);
+    fill(0, 255, 0, 100);
     noStroke();
-    ellipse(food[i].x, food[i].y, 4);
+    ellipse(food[i].x, food[i].y, eat_threshold*2);
   }
 
   for (var i = 0; i < poison.length; i++) {
