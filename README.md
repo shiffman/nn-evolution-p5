@@ -1,6 +1,3 @@
-# nn-evolution-p5
-A neuroevolution demonstration with p5
+# Deprecated
 
-Demo: https://shiffman.github.io/nn-evolution-p5/
-
-Inspired @xviniette's neuroevolution chrome experiment [Flappy Learning](https://www.chromeexperiments.com/experiment/flappylearning).
+This repo has been deprecated. All work is happening here: [Neural-Network-p5](https://github.com/shiffman/Neural-Network-p5).
